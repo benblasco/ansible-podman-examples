@@ -1,0 +1,8 @@
+ansible_python_interpreter: /usr/bin/python3
+#
+# exported_container_volumes_basedir: "/home/bblasco/ubiquiti"
+exported_container_volumes_basedir: "/var/lib/containers/exported_volumes"
+
+#unifi_ip: "10.88.0.1"
+my_domain: "lan"
+my_timezone: "Australia/Melbourne"

@@ -1,4 +1,6 @@
+ansible_python_interpreter: /usr/bin/python3
+
 exported_container_volumes_basedir: /var/lib/containers/exported_volumes
-my_domain: localdomain
-my_timezone: "Europe/Helsinki"
+my_domain: lan
+my_timezone: "Australia/Melbourne"
 nextcloud_nfs_mountpoint: your.nas.storage:/share/nextcloud
