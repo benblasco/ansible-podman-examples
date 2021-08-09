@@ -3,19 +3,29 @@
 # ansible-playbook --vault-password-file .vault-password -b -i \
 # ~/vagrant/fedora/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
 # -e ansible_python_interpreter=/usr/bin/python3 -e state=running test-podman.yml
+# Note that the container also creates an unnamed volume which is mounted at
+# /var/run/unifi in the container, based on the Dockerfile, which can be found at:
+# https://github.com/jacobalberty/unifi-docker/blob/master/Dockerfile
+# The other volumes are created when calling podman
 
 - name: ensure unifi container is running
-  hosts: all
+  hosts: localhost
+  connection: local
+  become: yes
+
   vars:
     container_name: unifi
-    container_image: jacobalberty/unifi:latest
+    #container_image: jacobalberty/unifi:latest
+    container_image_list:
+      - jacobalberty/unifi:latest
     #container_run_as_user: unifi
-    unifi_uid: 975
-    unifi_gid: 972
+    unifi_uid: 1111
+    unifi_gid: 1111
     container_run_args: >-
       --rm
-      -p 8080:8080 -p 8443:8443 -p 3478:3478/udp -p 10001:10001/udp
+      -p 8080:8080 -p 8443:8443 -p 3478:3478/udp -p 10001:10001/udp -p 5514:5514/udp
       -v "{{exported_container_volumes_basedir}}/unifi:/unifi:Z"
+      --label "io.containers.autoupdate=image"
       --hostname="unifi.{{ my_domain }}"
       --memory=2048M
       -e TZ="{{ my_timezone }}"
@@ -26,8 +36,10 @@
       - 8443/tcp
       - 3478/udp
       - 10001/udp
+      - 5514/udp
 
   tasks:
+  - include_vars: vars/main.yml
 
   - name: set variable states when container state is running
     set_fact:
@@ -72,4 +84,4 @@
 
   - name: ensure container state
     import_role:
-      name: podman_container_systemd
+      name: ikke_t.podman_container_systemd
