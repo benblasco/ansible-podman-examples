@@ -17,7 +17,7 @@
     container_name: unifi
     #container_image: jacobalberty/unifi:latest
     container_image_list:
-      - jacobalberty/unifi:latest
+      - docker.io/jacobalberty/unifi:latest
     #container_run_as_user: unifi
     unifi_uid: 1111
     unifi_gid: 1111
