@@ -1,0 +1,54 @@
+---
+# https://github.com/pi-hole/docker-pi-hole
+- name: ensure pihole container is running
+  hosts: localhost
+  connection: local
+  become: yes
+
+  vars:
+    container_state: running
+    container_name: pihole-micro
+    container_image_list:
+      - docker.io/pihole/pihole:latest
+    container_dir_config: pihole-etc
+    container_dir_data: pihole-dnsmasq.d
+    container_dir_owner: 0
+    container_dir_group: 0
+    container_run_args: >-
+      --rm
+      -p 192.168.1.6:53:53/tcp
+      -p 192.168.1.6:53:53/udp
+      -p 192.168.1.6:80:80/tcp
+      -p 192.168.1.6:443:443/tcp
+      -v "{{exported_container_volumes_basedir}}/{{container_dir_config}}:/etc/pihole:Z"
+      -v "{{exported_container_volumes_basedir}}/{{container_dir_data}}:/etc/dnsmasq.d:Z"
+      --hostname="pihole.{{ my_domain }}"
+      --memory=512M
+      -e "TZ={{ my_timezone }}"
+      --dns 127.0.0.1,1.1.1.1
+    firewall_port_list:
+      - 53:53/tcp
+      - 53:53/udp
+      - 67:67/udp
+      - 80:80/tcp
+      - 443:443/tcp
+
+  tasks:
+  - include_vars: vars/main.yml
+
+  - name: ensure container files mount point on host
+    tags: mount
+    file:
+      path: "{{exported_container_volumes_basedir}}/{{ item }}"
+      owner: "{{ container_dir_owner }}"
+      group: "{{ container_dir_group }}"
+      state: directory
+      recurse: yes
+    with_items:
+      - "{{container_dir_config}}"
+      - "{{container_dir_data}}"
+
+  - name: ensure container state
+    tags: container
+    import_role:
+      name: ikke_t.podman_container_systemd
