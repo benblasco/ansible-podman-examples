@@ -22,7 +22,7 @@
       -p 192.168.1.6:443:443/tcp
       -v "{{exported_container_volumes_basedir}}/{{container_dir_config}}:/etc/pihole:Z"
       -v "{{exported_container_volumes_basedir}}/{{container_dir_data}}:/etc/dnsmasq.d:Z"
-      --hostname="pihole.{{ my_domain }}"
+      --hostname="pihole-micro.{{ my_domain }}"
       --memory=512M
       -e "TZ={{ my_timezone }}"
       --dns 127.0.0.1,1.1.1.1
