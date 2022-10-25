@@ -26,7 +26,7 @@
       --memory=512M
       -e "TZ={{ my_timezone }}"
       --dns "127.0.0.1,1.1.1.1"
-    container_firewall_ports::
+    container_firewall_ports:
       - 53/tcp
       - 53/udp
       - 67/udp
